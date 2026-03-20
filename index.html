@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Starting Point</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #FDF8F0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 4px 28px rgba(27, 58, 47, 0.13);
+  width: 100%;
+  max-width: 460px;
+  overflow: hidden;
+}
+
+.card-header {
+  background: #1B3A2F;
+  padding: 22px 24px 18px;
+  text-align: center;
+}
+
+.card-eyebrow {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.card-title {
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.dot.active {
+  background: #FFFFFF;
+  transform: scale(1.3);
+}
+
+.dot.done {
+  background: #A8C5A0;
+}
+
+.card-body {
+  padding: 28px 24px 26px;
+  min-height: 220px;
+  position: relative;
+}
+
+/* Question blocks */
+.step {
+  display: none;
+}
+
+.step.visible {
+  display: block;
+  animation: rise 0.32s ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-emoji {
+  font-size: 30px;
+  display: block;
+  margin-bottom: 11px;
+}
+
+.step-question {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1B3A2F;
+  line-height: 1.4;
+  margin-bottom: 18px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.opt {
+  background: #FFFFFF;
+  border: 2px solid #1B3A2F;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1B3A2F;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.35;
+}
+
+.opt:hover {
+  background: #1B3A2F;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(27, 58, 47, 0.22);
+}
+
+.opt:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.opt-icon {
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+/* Result */
+.result {
+  display: none;
+  text-align: center;
+}
+
+.result.visible {
+  display: block;
+  animation: rise 0.38s ease both;
+}
+
+.result-badge {
+  display: inline-block;
+  background: #E8F2EA;
+  color: #1B3A2F;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+.result-emoji {
+  font-size: 38px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.result-name {
+  font-size: 19px;
+  font-weight: 800;
+  color: #1B3A2F;
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.result-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: #A8C5A0;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.result-desc {
+  font-size: 13px;
+  color: #5A7A6E;
+  line-height: 1.65;
+  margin-bottom: 22px;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.result-cta {
+  display: inline-block;
+  background: #1B3A2F;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 13px 26px;
+  border-radius: 12px;
+  letter-spacing: 0.02em;
+  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.result-cta:hover {
+  background: #254f3f;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(27, 58, 47, 0.25);
+}
+
+.restart {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #A8C5A0;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 14px;
+  padding: 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  letter-spacing: 0.02em;
+  transition: color 0.15s ease;
+}
+
+.restart:hover {
+  color: #1B3A2F;
+}
+
+/* Divider line in header */
+.header-rule {
+  width: 32px;
+  height: 2px;
+  background: rgba(255,255,255,0.2);
+  margin: 12px auto 0;
+  border-radius: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="card-header">
+    <div class="card-eyebrow">Sexual Euphoria</div>
+    <div class="card-title">Which formula is right for you?</div>
+    <div class="dots">
+      <div class="dot active" id="d0"></div>
+      <div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div>
+    </div>
+    <div class="header-rule"></div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- Question 1 -->
+    <div class="step visible" id="q0">
+      <span class="step-emoji">🌿</span>
+      <div class="step-question">Have you tried THC edibles before?</div>
+      <div class="options">
+        <button class="opt" onclick="pick(0,0)">
+          <span class="opt-icon">🌱</span> First time — totally new to this
+        </button>
+        <button class="opt" onclick="pick(0,1)">
+          <span class="opt-icon">✔️</span> Yes, I have some experience
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="step" id="q1">
+      <span class="step-emoji">✨</span>
+      <div class="step-question">What kind of experience are you after?</div>
+      <div class="options">
+        <button class="opt" onclick="pick(1,0)">
+          <span class="opt-icon">⚡</span> Playful, uplifted, and energized
+        </button>
+        <button class="opt" onclick="pick(1,1)">
+          <span class="opt-icon">🌊</span> Deep, relaxed, and fully present
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="step" id="q2">
+      <span class="step-emoji">🌙</span>
+      <div class="step-question">Going solo or with a partner?</div>
+      <div class="options">
+        <button class="opt" onclick="pick(2,0)">
+          <span class="opt-icon">🙋</span> Just me
+        </button>
+        <button class="opt" onclick="pick(2,1)">
+          <span class="opt-icon">💑</span> With a partner
+        </button>
+      </div>
+    </div>
+
+    <!-- Result: Standard -->
+    <div class="result" id="r-standard">
+      <div class="result-badge">Your match</div>
+      <span class="result-emoji">🌿</span>
+      <div class="result-name">Sexual Euphoria</div>
+      <div class="result-sub">5mg · Nano-emulsified · 10-count</div>
+      <p class="result-desc" id="desc-standard">
+        The 5mg formula is your ideal starting point. Fast-acting, smooth, and easy to get right.
+      </p>
+      <a class="result-cta" href="https://mood.com/product/sexual-euphoria-advanced" target="_blank">Shop Sexual Euphoria →</a>
+      <button class="restart" onclick="reset()">Start over</button>
+    </div>
+
+    <!-- Result: Advanced -->
+    <div class="result" id="r-advanced">
+      <div class="result-badge">Your match</div>
+      <span class="result-emoji">🔥</span>
+      <div class="result-name">Sexual Euphoria Advanced</div>
+      <div class="result-sub">15mg THC · 5mg THCv · 10mg CBD · 10-count</div>
+      <p class="result-desc" id="desc-advanced">
+        The Advanced formula is built for experienced users. THCv adds focus and energy alongside the THC and CBD blend.
+      </p>
+      <a class="result-cta" href="https://mood.com/product/sexual-euphoria-advanced" target="_blank">Shop Sexual Euphoria Advanced →</a>
+      <button class="restart" onclick="reset()">Start over</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var ans = [];
+
+function pick(q, val) {
+  ans[q] = val;
+
+  var dot = document.getElementById('d' + q);
+  dot.classList.remove('active');
+  dot.classList.add('done');
+
+  document.getElementById('q' + q).classList.remove('visible');
+
+  var next = q + 1;
+  if (next < 3) {
+    document.getElementById('q' + next).classList.add('visible');
+    var nd = document.getElementById('d' + next);
+    if (nd) { nd.classList.add('active'); }
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  var isNew     = (ans[0] === 0);
+  var withPtnr  = (ans[2] === 1);
+
+  if (isNew) {
+    document.getElementById('desc-standard').textContent = withPtnr
+      ? 'The 5mg formula is perfect for getting started. Both of you can find your level comfortably at your own pace.'
+      : 'The 5mg formula is your ideal starting point. Fast-acting, smooth, and easy to get right first time.';
+    document.getElementById('r-standard').classList.add('visible');
+  } else {
+    document.getElementById('desc-advanced').textContent = withPtnr
+      ? 'The Advanced formula is built for experienced users. If your partner is newer to edibles, have them start with the standard 5mg version instead.'
+      : 'The Advanced formula is built for experienced users. THCv adds focus and energy alongside the THC and CBD blend for a fuller experience.';
+    document.getElementById('r-advanced').classList.add('visible');
+  }
+}
+
+function reset() {
+  ans = [];
+
+  ['r-standard', 'r-advanced'].forEach(function(id) {
+    document.getElementById(id).classList.remove('visible');
+  });
+
+  [0, 1, 2].forEach(function(i) {
+    var d = document.getElementById('d' + i);
+    d.classList.remove('active', 'done');
+    document.getElementById('q' + i).classList.remove('visible');
+  });
+
+  document.getElementById('d0').classList.add('active');
+  document.getElementById('q0').classList.add('visible');
+}
+</script>
+
+</body>
+</html>
